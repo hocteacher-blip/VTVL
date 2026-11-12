@@ -153,9 +153,25 @@ app.post('/api/auth/register', async (req, res) => {
     const existing = users.find((u) => u.email.toLowerCase() === cleanEmail);
 
     if (existing) {
+      if (existing.password === password) {
+        existing.fullName = fullName || existing.fullName;
+        if (schoolName) existing.schoolName = schoolName;
+        if (schoolLevel) existing.schoolLevel = schoolLevel;
+        if (role) existing.role = role;
+        if (phoneNumber) existing.phoneNumber = phoneNumber;
+        existing.isVerified = true;
+        existing.lastLoginAt = new Date().toISOString();
+        saveUsers(users);
+        const { password: _, verificationOtp: __, otpExpiresAt: ___, ...safeUser } = existing;
+        return res.json({
+          success: true,
+          message: 'Tài khoản đã tồn tại và đã đồng bộ thông tin. Đăng nhập thành công!',
+          user: safeUser,
+        });
+      }
       return res.status(400).json({
         success: false,
-        message: 'Địa chỉ Email này đã được đăng ký trong hệ thống. Vui lòng chuyển sang tab Đăng nhập.',
+        message: 'Địa chỉ Email này đã được đăng ký trong hệ thống. Vui lòng chuyển sang tab Đăng nhập để đăng nhập.',
       });
     }
 
@@ -504,6 +520,11 @@ Trả về kết quả kiểm tra định dạng JSON:
     console.error('Error in /api/gemini/audit-dossier:', error);
     res.status(500).json({ error: error?.message || 'Lỗi thẩm tra hồ sơ' });
   }
+});
+
+// Ensure any unhandled /api/* request returns JSON, not HTML
+app.all('/api/*', (_req, res) => {
+  res.status(404).json({ success: false, message: 'Đường dẫn API không tồn tại.' });
 });
 
 async function startServer() {

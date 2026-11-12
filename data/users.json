@@ -1,1 +1,26 @@
-[]
+[
+  {
+    "id": "usr_1794453175808",
+    "email": "test@example.com",
+    "password": "password123",
+    "fullName": "Test User",
+    "schoolName": "Trường phổ thông công lập",
+    "schoolLevel": "TIEU_HOC",
+    "role": "Hiệu trưởng",
+    "isVerified": true,
+    "createdAt": "2026-11-12T03:12:55.808Z",
+    "lastLoginAt": "2026-11-12T03:12:55.808Z"
+  },
+  {
+    "id": "usr_1794453324731",
+    "email": "giaovien.test@gmail.com",
+    "password": "matkhau123",
+    "fullName": "Nguyễn Văn A",
+    "schoolName": "Tiểu học Kim Đồng",
+    "schoolLevel": "TIEU_HOC",
+    "role": "Hiệu trưởng",
+    "isVerified": true,
+    "createdAt": "2026-11-12T03:15:24.731Z",
+    "lastLoginAt": "2026-11-12T03:15:29.432Z"
+  }
+]
