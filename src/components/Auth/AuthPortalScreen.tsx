@@ -47,6 +47,8 @@ export const AuthPortalScreen: React.FC = () => {
 
   // UI helpers
   const [showPassword, setShowPassword] = useState(false);
+  const [showRegisterPassword, setShowRegisterPassword] = useState(false);
+  const [showRegisterConfirmPassword, setShowRegisterConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -558,16 +560,26 @@ export const AuthPortalScreen: React.FC = () => {
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
                         <Lock className="w-3.5 h-3.5 text-indigo-400" />
-                        <span>Mật khẩu <span className="text-rose-400">*</span></span>
+                        <span>Mật khẩu (≥ 6 ký tự) <span className="text-rose-400">*</span></span>
                       </label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="Tối thiểu 6 ký tự"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-700 bg-slate-800 text-white placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
-                      />
+                      <div className="relative">
+                        <input
+                          type={showRegisterPassword ? 'text' : 'password'}
+                          required
+                          placeholder="Tối thiểu 6 ký tự"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          className="w-full px-3 py-2 pr-9 text-xs rounded-xl border border-slate-700 bg-slate-800 text-white placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowRegisterPassword(!showRegisterPassword)}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1"
+                          title={showRegisterPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                        >
+                          {showRegisterPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
 
                     <div className="space-y-1.5">
@@ -575,14 +587,24 @@ export const AuthPortalScreen: React.FC = () => {
                         <Lock className="w-3.5 h-3.5 text-indigo-400" />
                         <span>Nhập lại mật khẩu <span className="text-rose-400">*</span></span>
                       </label>
-                      <input
-                        type="password"
-                        required
-                        placeholder="Xác nhận mật khẩu"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-700 bg-slate-800 text-white placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
-                      />
+                      <div className="relative">
+                        <input
+                          type={showRegisterConfirmPassword ? 'text' : 'password'}
+                          required
+                          placeholder="Xác nhận mật khẩu"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="w-full px-3 py-2 pr-9 text-xs rounded-xl border border-slate-700 bg-slate-800 text-white placeholder:text-slate-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowRegisterConfirmPassword(!showRegisterConfirmPassword)}
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-1"
+                          title={showRegisterConfirmPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
+                        >
+                          {showRegisterConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
                     </div>
                   </div>
 
