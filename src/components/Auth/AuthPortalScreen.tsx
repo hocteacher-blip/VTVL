@@ -747,10 +747,20 @@ export const AuthPortalScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-indigo-950/60 py-4 text-center text-xs text-slate-400">
-        Phần mềm Hướng dẫn & Xây dựng Vị trí việc làm 9 bước — Đơn vị sự nghiệp GD&ĐT công lập Việt Nam
-      </div>
+      {/* Footer & Copyright */}
+      <footer className="border-t border-indigo-950/80 bg-slate-950/80 py-4 px-4 text-center text-xs text-slate-400">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+          <div>
+            Phần mềm Hướng dẫn & Xây dựng Vị trí việc làm 9 bước — Đơn vị sự nghiệp GD&ĐT công lập
+          </div>
+          <div className="text-slate-300 font-medium flex items-center justify-center gap-1.5 flex-wrap">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0" />
+            <span>
+              Bản quyền do thầy <strong className="text-indigo-400 font-bold">Lê Thái Học</strong> — Trường Tiểu học Trần Quốc Toản — Phường Hạ Long — Thành phố Quảng Ninh phát triển
+            </span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

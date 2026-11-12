@@ -408,6 +408,22 @@ function MainAppContent() {
         currentStep={currentStep}
       />
 
+      {/* Persistent Copyright Footer */}
+      <footer className="mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 py-3.5 px-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold text-slate-700 dark:text-slate-300">VTVL 9 Bước GD&ĐT</span>
+            <span>— Căn cứ Nghị định 232/2026/NĐ-CP & Thông tư 20/2023/TT-BGDĐT</span>
+          </div>
+          <div className="text-slate-600 dark:text-slate-300 font-medium flex items-center gap-1.5 flex-wrap justify-center">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+            <span>
+              Bản quyền do thầy <strong className="text-indigo-600 dark:text-indigo-400 font-bold">Lê Thái Học</strong> — Trường Tiểu học Trần Quốc Toản — Phường Hạ Long — Thành phố Quảng Ninh phát triển
+            </span>
+          </div>
+        </div>
+      </footer>
+
       {/* Legal References Modal */}
       <LegalReferencesModal
         isOpen={isLegalModalOpen}
