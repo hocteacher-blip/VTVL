@@ -139,53 +139,27 @@ async function sendVerificationEmail(email: string, fullName: string, otp: strin
   }
 }
 
-// 1. API: Đăng ký tài khoản (Register)
+// 1. API: Đăng ký tài khoản (Register) - Đăng ký là tài khoản có hiệu lực ngay
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password, fullName, schoolName, schoolLevel, role, phoneNumber } = req.body;
 
     if (!email || !password || !fullName) {
-      return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ Họ tên, Gmail và Mật khẩu.' });
+      return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ Họ tên, Email và Mật khẩu.' });
     }
 
     const cleanEmail = String(email).trim().toLowerCase();
     const users = loadUsers();
     const existing = users.find((u) => u.email.toLowerCase() === cleanEmail);
 
-    if (existing && existing.isVerified) {
+    if (existing) {
       return res.status(400).json({
         success: false,
-        message: 'Địa chỉ Gmail này đã được đăng ký và kích hoạt. Vui lòng chuyển sang tab Đăng nhập.',
+        message: 'Địa chỉ Email này đã được đăng ký trong hệ thống. Vui lòng chuyển sang tab Đăng nhập.',
       });
     }
 
-    // Tạo mã OTP 6 chữ số ngẫu nhiên
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 15 * 60 * 1000; // 15 phút
-
-    if (existing && !existing.isVerified) {
-      // Cập nhật lại thông tin và gửi lại mã OTP mới
-      existing.password = password;
-      existing.fullName = fullName;
-      existing.schoolName = schoolName || existing.schoolName;
-      existing.schoolLevel = schoolLevel || existing.schoolLevel;
-      existing.role = role || existing.role;
-      existing.phoneNumber = phoneNumber || existing.phoneNumber;
-      existing.verificationOtp = otp;
-      existing.otpExpiresAt = expiresAt;
-      saveUsers(users);
-
-      await sendVerificationEmail(cleanEmail, fullName, otp);
-
-      return res.json({
-        success: true,
-        message: `Mã xác nhận 6 số đã được gửi tới Gmail: ${cleanEmail}. Vui lòng nhập mã để kích hoạt tài khoản.`,
-        email: cleanEmail,
-        testOtp: otp,
-      });
-    }
-
-    // Tạo tài khoản mới với trạng thái chưa kích hoạt (isVerified: false)
+    // Tạo tài khoản mới có hiệu lực ngay (isVerified: true)
     const newUser: StoredUser = {
       id: 'usr_' + Date.now(),
       email: cleanEmail,
@@ -195,22 +169,22 @@ app.post('/api/auth/register', async (req, res) => {
       schoolLevel: schoolLevel || 'TIEU_HOC',
       role: role || 'Hiệu trưởng',
       phoneNumber,
-      isVerified: false,
-      verificationOtp: otp,
-      otpExpiresAt: expiresAt,
+      isVerified: true,
       createdAt: new Date().toISOString(),
+      lastLoginAt: new Date().toISOString(),
     };
 
     users.push(newUser);
     saveUsers(users);
 
-    await sendVerificationEmail(cleanEmail, fullName, otp);
+    const { password: _, verificationOtp: __, otpExpiresAt: ___, ...safeUser } = newUser;
+
+    console.log(`[USER REGISTERED & ACTIVE] Tài khoản ${cleanEmail} đã đăng ký thành công và có hiệu lực ngay!`);
 
     return res.json({
       success: true,
-      message: `Đăng ký thành công! Mã xác nhận 6 số đã được gửi về Gmail: ${cleanEmail}. Nhập mã để kích hoạt tài khoản.`,
-      email: cleanEmail,
-      testOtp: otp,
+      message: 'Đăng ký tài khoản thành công! Bạn có thể sử dụng hệ thống ngay bây giờ.',
+      user: safeUser,
     });
   } catch (error: any) {
     console.error('Error in /api/auth/register:', error);
@@ -218,114 +192,33 @@ app.post('/api/auth/register', async (req, res) => {
   }
 });
 
-// 2. API: Xác thực mã đăng ký từ Gmail (Verify OTP)
+// 2. API: Xác thực mã (Giữ tương thích)
 app.post('/api/auth/verify-otp', (req, res) => {
-  try {
-    const { email, otp } = req.body;
-
-    if (!email || !otp) {
-      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp Gmail và Mã xác nhận.' });
-    }
-
-    const cleanEmail = String(email).trim().toLowerCase();
-    const cleanOtp = String(otp).trim();
-    const users = loadUsers();
-    const user = users.find((u) => u.email.toLowerCase() === cleanEmail);
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'Không tìm thấy tài khoản với Gmail này.' });
-    }
-
-    if (user.isVerified) {
-      const { password: _, verificationOtp: __, otpExpiresAt: ___, ...safeUser } = user;
-      return res.json({
-        success: true,
-        message: 'Tài khoản đã được xác thực trước đó. Bạn có thể sử dụng hệ thống ngay bây giờ.',
-        user: safeUser,
-      });
-    }
-
-    if (user.verificationOtp !== cleanOtp) {
-      return res.status(400).json({
-        success: false,
-        message: 'Mã xác nhận không chính xác. Vui lòng kiểm tra lại hòm thư Gmail của bạn.',
-      });
-    }
-
-    if (user.otpExpiresAt && Date.now() > user.otpExpiresAt) {
-      return res.status(400).json({
-        success: false,
-        message: 'Mã xác nhận đã hết hạn (quá 15 phút). Vui lòng bấm "Gửi lại mã mới".',
-      });
-    }
-
-    // KÍCH HOẠT TÀI KHOẢN THÀNH CÔNG
+  const { email } = req.body;
+  const cleanEmail = String(email || '').trim().toLowerCase();
+  const users = loadUsers();
+  const user = users.find((u) => u.email.toLowerCase() === cleanEmail);
+  if (user) {
     user.isVerified = true;
-    user.verificationOtp = undefined;
-    user.otpExpiresAt = undefined;
-    user.lastLoginAt = new Date().toISOString();
     saveUsers(users);
-
     const { password: _, verificationOtp: __, otpExpiresAt: ___, ...safeUser } = user;
-
-    console.log(`[USER ACTIVATED] Tài khoản ${cleanEmail} đã được kích hoạt thành công!`);
-
-    return res.json({
-      success: true,
-      message: 'Xác thực tài khoản thành công! Tài khoản của Thầy/Cô đã có hiệu lực để sử dụng toàn bộ hệ thống.',
-      user: safeUser,
-    });
-  } catch (error: any) {
-    console.error('Error in /api/auth/verify-otp:', error);
-    res.status(500).json({ success: false, message: 'Lỗi xác thực mã OTP.' });
+    return res.json({ success: true, message: 'Tài khoản hợp lệ.', user: safeUser });
   }
+  return res.status(404).json({ success: false, message: 'Không tìm thấy tài khoản.' });
 });
 
-// 3. API: Gửi lại mã xác nhận (Resend OTP)
-app.post('/api/auth/resend-otp', async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp địa chỉ Gmail.' });
-    }
-
-    const cleanEmail = String(email).trim().toLowerCase();
-    const users = loadUsers();
-    const user = users.find((u) => u.email.toLowerCase() === cleanEmail);
-
-    if (!user) {
-      return res.status(404).json({ success: false, message: 'Tài khoản chưa được đăng ký trong hệ thống.' });
-    }
-
-    if (user.isVerified) {
-      return res.status(400).json({ success: false, message: 'Tài khoản này đã được kích hoạt trước đó.' });
-    }
-
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    user.verificationOtp = otp;
-    user.otpExpiresAt = Date.now() + 15 * 60 * 1000;
-    saveUsers(users);
-
-    await sendVerificationEmail(cleanEmail, user.fullName, otp);
-
-    return res.json({
-      success: true,
-      message: `Đã gửi lại mã xác nhận mới tới Gmail: ${cleanEmail}.`,
-      testOtp: otp,
-    });
-  } catch (error: any) {
-    console.error('Error in /api/auth/resend-otp:', error);
-    res.status(500).json({ success: false, message: 'Lỗi gửi lại mã OTP.' });
-  }
+// 3. API: Gửi lại mã (Giữ tương thích)
+app.post('/api/auth/resend-otp', async (_req, res) => {
+  return res.json({ success: true, message: 'Tài khoản không yêu cầu mã xác nhận.' });
 });
 
-// 4. API: Đăng nhập (Login)
+// 4. API: Đăng nhập (Login) - Đăng ký là đăng nhập được ngay
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: 'Vui lòng nhập đầy đủ Gmail và Mật khẩu.' });
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập đầy đủ Email và Mật khẩu.' });
     }
 
     const cleanEmail = String(email).trim().toLowerCase();
@@ -343,25 +236,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(401).json({ success: false, message: 'Mật khẩu không chính xác.' });
     }
 
-    // BẮT BUỘC: Tài khoản phải được kích hoạt bằng mã gửi về Gmail
-    if (!user.isVerified) {
-      // Tự động tạo và gửi lại mã OTP mới nếu cần
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      user.verificationOtp = otp;
-      user.otpExpiresAt = Date.now() + 15 * 60 * 1000;
-      saveUsers(users);
-
-      await sendVerificationEmail(cleanEmail, user.fullName, otp);
-
-      return res.status(403).json({
-        success: false,
-        needsVerification: true,
-        email: cleanEmail,
-        testOtp: otp,
-        message: 'Tài khoản chưa có hiệu lực do chưa điền mã xác nhận từ Gmail. Hệ thống vừa gửi mã xác nhận về Gmail của bạn.',
-      });
-    }
-
+    user.isVerified = true;
     user.lastLoginAt = new Date().toISOString();
     saveUsers(users);
 

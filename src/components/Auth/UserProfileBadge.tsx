@@ -47,7 +47,7 @@ export const UserProfileBadge: React.FC = () => {
       >
         <div className="relative flex items-center justify-center w-7 h-7 rounded-full bg-indigo-600 text-white font-bold text-[11px] shadow-xs">
           {initials}
-          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900" title="Đã kích hoạt bằng mã Gmail" />
+          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900" title="Tài khoản đã kích hoạt" />
         </div>
 
         <div className="text-left hidden sm:block">
@@ -56,7 +56,7 @@ export const UserProfileBadge: React.FC = () => {
           </div>
           <div className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-0.5">
             <CheckCircle2 className="w-2.5 h-2.5" />
-            <span>Gmail đã xác thực</span>
+            <span>Tài khoản chính thức</span>
           </div>
         </div>
 
@@ -75,7 +75,7 @@ export const UserProfileBadge: React.FC = () => {
             </div>
             <div className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold mt-0.5">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              <span>Tài khoản đã kích hoạt mã Gmail</span>
+              <span>Tài khoản cán bộ hợp lệ</span>
             </div>
           </div>
 

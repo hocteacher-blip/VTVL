@@ -86,9 +86,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (payload: RegisterPayload): Promise<AuthApiResponse> => {
     const res = await apiRegister(payload);
-    if (res.success) {
-      // Chuyển sang bước xác nhận OTP từ Gmail
-      openAuthModal('VERIFY', payload.email, res.testOtp);
+    if (res.success && res.user) {
+      setUser(res.user);
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(res.user));
+      closeAuthModal();
     }
     return res;
   };
