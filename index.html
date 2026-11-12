@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      (function() {
+        try {
+          var _f = window.fetch;
+          var descriptor = {
+            get: function() { return _f; },
+            set: function(fn) { _f = fn; },
+            configurable: true,
+            enumerable: true
+          };
+          try {
+            Object.defineProperty(window, 'fetch', descriptor);
+          } catch (e1) {}
+          if (typeof Window !== 'undefined' && Window.prototype) {
+            try {
+              Object.defineProperty(Window.prototype, 'fetch', descriptor);
+            } catch (e2) {}
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chuyên Gia Vị Trí Việc Làm 9 Bước - Tiểu học & THCS</title>
+    <meta name="description" content="Hệ thống chuyên gia hướng dẫn và hỗ trợ thực hiện quy trình 9 bước xây dựng Đề án Vị trí việc làm chuẩn hóa cho trường Tiểu học, THCS và Trường liên cấp TH & THCS công lập theo Nghị định 232/2026/NĐ-CP và Thông tư 20/2023/TT-BGDĐT." />
+    <meta property="og:title" content="Chuyên Gia Vị Trí Việc Làm 9 Bước - Tiểu học & THCS" />
+    <meta property="og:description" content="Hệ thống chuyên gia hướng dẫn và hỗ trợ thực hiện quy trình 9 bước xây dựng Đề án Vị trí việc làm chuẩn hóa cho trường Tiểu học, THCS và Trường liên cấp TH & THCS công lập theo Nghị định 232/2026/NĐ-CP và Thông tư 20/2023/TT-BGDĐT." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

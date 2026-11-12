@@ -1,0 +1,6 @@
+{
+  "name": "Chuyên Gia Vị Trí Việc Làm 9 Bước - Tiểu học & THCS",
+  "description": "Hệ thống chuyên gia hướng dẫn và hỗ trợ thực hiện quy trình 9 bước xây dựng Đề án Vị trí việc làm chuẩn hóa cho trường Tiểu học, THCS và Trường liên cấp TH & THCS công lập theo Nghị định 232/2026/NĐ-CP và Thông tư 20/2023/TT-BGDĐT.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

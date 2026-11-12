@@ -1,0 +1,14 @@
+[
+  {
+    "id": "usr_1794448659863",
+    "email": "hoc.teacher@gmail.com",
+    "password": "Password123",
+    "fullName": "Thầy Học",
+    "schoolName": "Trường THCS Lê Quý Đôn",
+    "schoolLevel": "THCS",
+    "role": "Hiệu trưởng",
+    "isVerified": true,
+    "createdAt": "2026-11-12T01:57:39.863Z",
+    "lastLoginAt": "2026-11-12T01:58:05.214Z"
+  }
+]
